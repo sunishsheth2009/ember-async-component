@@ -1,8 +1,9 @@
 ember-async-component
 ==============================================================================
 
-[Short description of the addon.]
-
+This ember addon is used for building promise aware container components which
+handles success, loading and error states. This component also works seemlessly
+with [ember-cli-fastboot](https://github.com/ember-fastboot/ember-cli-fastboot)
 
 Compatibility
 ------------------------------------------------------------------------------
@@ -22,8 +23,7 @@ ember install ember-async-component
 Usage
 ------------------------------------------------------------------------------
 
-[Longer description of how to use the addon in apps.]
-
+TO COME SOON
 
 Contributing
 ------------------------------------------------------------------------------
