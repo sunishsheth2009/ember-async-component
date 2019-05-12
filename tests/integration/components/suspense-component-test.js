@@ -101,7 +101,7 @@ module('Integration | Component | suspense-component', function(hooks) {
     this.deferred = new Defer();
     this.deferredPromise = this.deferred.promise;
 
-    this.sandbox = sinon.sandbox.create();
+    this.sandbox = sinon.createSandbox();
     this.deferRendering = this.sandbox.stub();
     const fastbootStub = Service.extend({
       isFastBoot: true,
