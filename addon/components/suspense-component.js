@@ -7,37 +7,30 @@ import layout from '../templates/components/suspense-component';
 /**
  * This is the suspense component which be used to by container components when making API calls in a component.
  * This component handles server side rendering issues and loading and error states out of the box for the consumer
- * @param {string} [a11yText] Optional override the text for the loading spinner
- * @param {string} [loadingText] Optional loading text instead of the loading spinner
- * @param {boolean} [overlay] Optional overlay flag to enable overlay. Default is true
- * @param {string} [size] Optional size for the loading icon
- * @param {string} [screenLoaderPosition] Optional position for the screen loader when it's loading
- * @param {string} [screenLoaderType] Optional type for the screen loader
  * @param {Function|object} [promise] Required promise for the component to render the loading, success and error state
+ * @param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
  * ...
  * @example
  *   {{#suspense-component
  *     promise=promise
  *     blockRender=false
- *     as |payload|
+ *     as |task|
  *   }}
- *     {{payload.userRequest.name}}: {{payload.userRequest.time}}
- *   {{else}}
- *     {{errorMessage}}
+ *     {{#if task.isLoading}}
+ *       Loading...
+ *     {{else if task.isSuccess}}
+ *       {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
+ *     {{else if task.isError}}
+ *       Error occurred: {{task.errorReason}}
+ *     {{/if}}
  *   {{/suspense-component}}
  */
 
 export default Component.extend({
   layout,
-  a11yText: null,
-  loadingText: null,
-  overlay: true,
-  size: null,
-  screenLoaderPosition: 'center',
-  screenLoaderType: 'inline',
   blockRender: false,
-
   promise: null,
+
   task: null,
 
   init() {

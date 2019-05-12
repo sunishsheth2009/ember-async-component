@@ -23,7 +23,26 @@ ember install ember-async-component
 Usage
 ------------------------------------------------------------------------------
 
-TO COME SOON
+This is the suspense component which be used to by container components when making API calls in a component. This component handles server side rendering issues and loading and error states out of the box for the consumer
+
+@param {Function|object} [promise] Required promise for the component to render the loading, success and error state
+@param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
+
+```
+{{#suspense-component
+  promise=promise
+  blockRender=false
+  as |task|
+}}
+  {{#if task.isLoading}}
+    Loading...
+  {{else if task.isSuccess}}
+    {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
+  {{else if task.isError}}
+    Error occurred: {{task.errorReason}}
+  {{/if}}
+{{/suspense-component}}
+```
 
 Contributing
 ------------------------------------------------------------------------------
