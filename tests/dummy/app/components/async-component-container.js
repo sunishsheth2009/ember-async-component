@@ -24,7 +24,7 @@ export default Component.extend({
     return RSVP.hash(promise);
   }).readOnly(),
 
-  getUser(name = 'Bernard') {
+  getUser(name = 'Iron Man') {
     return new Promise((resolve) => {
       later(
         this,
