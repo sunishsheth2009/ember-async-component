@@ -8,8 +8,9 @@ with [ember-cli-fastboot](https://github.com/ember-fastboot/ember-cli-fastboot)
 Compatibility
 ------------------------------------------------------------------------------
 
-* Ember.js v2.18 or above
+* Ember.js v3.12 or above
 * Ember CLI v2.13 or above
+* Node.js v10 or above
 
 
 Installation
