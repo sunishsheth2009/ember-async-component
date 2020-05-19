@@ -10,7 +10,7 @@ export default Component.extend({
   promise: computed('errorComponent', function() {
     let promise;
 
-    if (this.get('errorComponent')) {
+    if (this.errorComponent) {
       promise = {
         errorRequest: this.getError(),
         eventsRequest: this.getEvents()
@@ -73,7 +73,7 @@ export default Component.extend({
     },
 
     propChangeReRender() {
-      this.set('errorComponent', !this.get('errorComponent'));
+      this.set('errorComponent', !this.errorComponent);
     }
   }
 });

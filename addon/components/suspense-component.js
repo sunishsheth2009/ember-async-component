@@ -48,17 +48,17 @@ export default Component.extend({
   },
 
   updateComponentValue(scopedPromised) {
-    return scopedPromised === this.get('promise') && !this.isDestroyed && !this.isDestroying;
+    return scopedPromised === this.promise && !this.isDestroyed && !this.isDestroying;
   },
 
-  execute(blockRender = this.get('blockRender')) {
+  execute(blockRender = this.blockRender) {
     if (!IS_BROWSER && !blockRender) {
       // we are not supposed to block rendering on the server
       return null;
     }
 
     this.set('isLoading', true);
-    const promiseOrCallback = this.get('promise');
+    const promiseOrCallback = this.promise;
     let promise;
 
     if (typeof promiseOrCallback === 'function') {
@@ -69,7 +69,7 @@ export default Component.extend({
 
     if (blockRender && this.get('fastboot.isFastBoot')) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
-      this.get('fastboot').deferRendering(promise);
+      this.fastboot.deferRendering(promise);
     }
 
     return promise
