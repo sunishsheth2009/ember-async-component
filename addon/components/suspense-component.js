@@ -1,8 +1,8 @@
-import { getOwner } from '@ember/application';
-import Component from '@ember/component';
-import Ember from 'ember';
-import IS_BROWSER from 'ember-async-component/utils/is-browser';
-import layout from '../templates/components/suspense-component';
+import { getOwner } from "@ember/application";
+import Component from "@glimmer/component";
+import Ember from "ember";
+import IS_BROWSER from "ember-async-component/utils/is-browser";
+import { tracked } from "@glimmer/tracking";
 
 /**
  * This is the suspense component which be used to by container components when making API calls in a component.
@@ -26,30 +26,35 @@ import layout from '../templates/components/suspense-component';
  *   {{/suspense-component}}
  */
 
-export default Component.extend({
-  layout,
-  blockRender: false,
-  promise: null,
+export default class SuspenseComponent extends Component {
+  @tracked blockRender;
+  @tracked promise;
+  @tracked isLoading;
+  @tracked task = {
+    data: null,
+    isSuccess: false,
+    isError: false,
+    errorReason: null,
+  };
 
-  task: null,
-
-  init() {
-    this._super(...arguments);
-    this.set('task', null);
+  constructor() {
+    super(...arguments);
 
     // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
     // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
-    this.set('fastboot', getOwner(this).lookup('service:fastboot'));
-  },
-
-  didReceiveAttrs() {
-    this._super(...arguments);
+    this.fastboot = getOwner(this).lookup("service:fastboot");
     this.execute();
-  },
+  }
+
+  // didReceiveAttrs() {
+  //   super.didReceiveAttrs(...arguments);
+  // }
 
   updateComponentValue(scopedPromised) {
-    return scopedPromised === this.promise && !this.isDestroyed && !this.isDestroying;
-  },
+    return (
+      scopedPromised === this.promise && !this.isDestroyed && !this.isDestroying
+    );
+  }
 
   execute(blockRender = this.blockRender) {
     if (!IS_BROWSER && !blockRender) {
@@ -57,17 +62,17 @@ export default Component.extend({
       return null;
     }
 
-    this.set('isLoading', true);
-    const promiseOrCallback = this.promise;
+    this.isLoading = true;
+    const promiseOrCallback = this.args.promise;
     let promise;
 
-    if (typeof promiseOrCallback === 'function') {
+    if (typeof promiseOrCallback === "function") {
       promise = promiseOrCallback();
     } else {
       promise = promiseOrCallback;
     }
 
-    if (blockRender && this.get('fastboot.isFastBoot')) {
+    if (blockRender && this.get("fastboot.isFastBoot")) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
       this.fastboot.deferRendering(promise);
     }
@@ -75,11 +80,11 @@ export default Component.extend({
     return promise
       .then((payload) => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.set('task', {
+          this.task = Object.assign(this.task, {
             data: payload,
             isSuccess: true,
             isError: false,
-            errorReason: null
+            errorReason: null,
           });
         }
 
@@ -87,11 +92,11 @@ export default Component.extend({
       })
       .catch((e) => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.set('task', {
+          this.task = Object.assign(this.task, {
             data: null,
             isSuccess: false,
             isError: true,
-            errorReason: e
+            errorReason: e,
           });
         }
 
@@ -102,8 +107,8 @@ export default Component.extend({
       })
       .finally(() => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.set('isLoading', false);
+          this.isLoading = false;
         }
       });
   }
-});
+}

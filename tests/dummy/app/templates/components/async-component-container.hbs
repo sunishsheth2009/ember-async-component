@@ -1,16 +1,16 @@
-{{#suspense-component
-  promise=promise
-  blockRender=false
-  as |task|
-}}
+<SuspenseComponent @promise={{this.promise}} @blockRender={{false}} as |task|>
+  {{debugger}}
   {{#if task.isLoading}}
+  {{debugger}}
     Loading...
   {{else if task.isSuccess}}
+  {{debugger}}
     {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
   {{else if task.isError}}
+  {{debugger}}
     Error occurred: {{task.errorReason}}
   {{/if}}
-{{/suspense-component}}
+</SuspenseComponent>
 
 <button type="button" onclick={{action "refreshModel"}}>Refresh</button>
 <button type="button" onclick={{action "propChangeReRender"}}>Change Promise</button>
