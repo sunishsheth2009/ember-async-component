@@ -25,16 +25,22 @@ import { tracked } from "@glimmer/tracking";
  *     {{/if}}
  *   {{/suspense-component}}
  */
+
+class Task {
+  @tracked data = null;
+  @tracked isSuccess = false;
+  @tracked isError = false;
+  @tracked errorReason = null;
+
+  set() {
+    Object.assign(this, { ...arguments[0] });
+  }
+}
+
 export default class SuspenseComponent extends Component {
   blockRender = false;
   promise = null;
   @tracked isLoading;
-  @tracked task = {
-    data: null,
-    isSuccess: false,
-    isError: false,
-    errorReason: null,
-  };
 
   constructor() {
     super(...arguments);
@@ -45,6 +51,7 @@ export default class SuspenseComponent extends Component {
 
     const blockRender = this.args.blockRender || false;
     this.execute(blockRender);
+    this.task = new Task();
   }
 
   // didReceiveAttrs() {
@@ -60,7 +67,6 @@ export default class SuspenseComponent extends Component {
   }
 
   execute(blockRender) {
-    debugger;
     if (!IS_BROWSER && !blockRender) {
       // we are not supposed to block rendering on the server
       return null;
@@ -76,7 +82,7 @@ export default class SuspenseComponent extends Component {
       promise = promiseOrCallback;
     }
 
-    if (blockRender && this.get("fastboot.isFastBoot")) {
+    if (blockRender && this.fastboot.isFastBoot) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
       this.fastboot.deferRendering(promise);
     }
@@ -84,7 +90,7 @@ export default class SuspenseComponent extends Component {
     return promise
       .then((payload) => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.task = Object.assign(this.task, {
+          this.task.set({
             data: payload,
             isSuccess: true,
             isError: false,
@@ -96,7 +102,7 @@ export default class SuspenseComponent extends Component {
       })
       .catch((e) => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.task = Object.assign(this.task, {
+          this.task.set({
             data: null,
             isSuccess: false,
             isError: true,
