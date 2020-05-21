@@ -1,16 +1,12 @@
-<SuspenseComponent @promise={{this.promise}} @blockRender={{false}} as |task|>
-  {{debugger}}
+{{#component "ember-async-component@suspense-component" promise=this.promise blockRender=false as |task|}}
   {{#if task.isLoading}}
-  {{debugger}}
     Loading...
   {{else if task.isSuccess}}
-  {{debugger}}
     {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
   {{else if task.isError}}
-  {{debugger}}
     Error occurred: {{task.errorReason}}
   {{/if}}
-</SuspenseComponent>
+{{/component}}
 
 <button type="button" onclick={{action "refreshModel"}}>Refresh</button>
 <button type="button" onclick={{action "propChangeReRender"}}>Change Promise</button>

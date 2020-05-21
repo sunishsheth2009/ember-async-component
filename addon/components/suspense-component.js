@@ -25,10 +25,9 @@ import { tracked } from "@glimmer/tracking";
  *     {{/if}}
  *   {{/suspense-component}}
  */
-
 export default class SuspenseComponent extends Component {
-  @tracked blockRender;
-  @tracked promise;
+  blockRender = false;
+  promise = null;
   @tracked isLoading;
   @tracked task = {
     data: null,
@@ -43,7 +42,9 @@ export default class SuspenseComponent extends Component {
     // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
     // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
     this.fastboot = getOwner(this).lookup("service:fastboot");
-    this.execute();
+
+    const blockRender = this.args.blockRender || false;
+    this.execute(blockRender);
   }
 
   // didReceiveAttrs() {
@@ -52,11 +53,14 @@ export default class SuspenseComponent extends Component {
 
   updateComponentValue(scopedPromised) {
     return (
-      scopedPromised === this.promise && !this.isDestroyed && !this.isDestroying
+      scopedPromised === this.args.promise &&
+      !this.isDestroyed &&
+      !this.isDestroying
     );
   }
 
-  execute(blockRender = this.blockRender) {
+  execute(blockRender) {
+    debugger;
     if (!IS_BROWSER && !blockRender) {
       // we are not supposed to block rendering on the server
       return null;

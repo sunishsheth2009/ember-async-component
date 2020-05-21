@@ -1,37 +1,37 @@
-import Component from '@ember/component';
-import { later } from '@ember/runloop';
-import RSVP from 'rsvp';
-import { computed } from '@ember/object';
-import { debounce } from '@ember/runloop';
+import Component from "@ember/component";
+import { later } from "@ember/runloop";
+import RSVP from "rsvp";
+import { computed } from "@ember/object";
+import { debounce } from "@ember/runloop";
 
 export default Component.extend({
   errorComponent: false,
 
-  promise: computed('errorComponent', function() {
+  promise: computed("errorComponent", function () {
     let promise;
 
     if (this.errorComponent) {
       promise = {
         errorRequest: this.getError(),
-        eventsRequest: this.getEvents()
+        eventsRequest: this.getEvents(),
       };
     } else {
       promise = {
-        userRequest: this.getUser()
+        userRequest: this.getUser(),
       };
     }
 
     return RSVP.hash(promise);
   }).readOnly(),
 
-  getUser(name = 'Iron Man') {
+  getUser(name = "Iron Man") {
     return new Promise((resolve) => {
       later(
         this,
         () => {
           resolve({
             name,
-            time: Date.now()
+            time: Date.now(),
           });
         },
         1000
@@ -44,12 +44,12 @@ export default Component.extend({
       later(
         this,
         () => {
-          reject('Events not found');
+          reject("Events not found");
         },
         2000
       );
     }).catch((e) => {
-      this.set('errorMessage', e);
+      this.set("errorMessage", e);
 
       throw e;
     });
@@ -60,7 +60,7 @@ export default Component.extend({
       later(
         this,
         () => {
-          reject('Uh oh, this promise was rejected');
+          reject("Uh oh, this promise was rejected");
         },
         2500
       );
@@ -69,11 +69,11 @@ export default Component.extend({
 
   actions: {
     refreshModel() {
-      debounce(this, 'notifyPropertyChange', 'promise', 200);
+      debounce(this, "notifyPropertyChange", "promise", 200);
     },
 
     propChangeReRender() {
-      this.set('errorComponent', !this.errorComponent);
-    }
-  }
+      this.set("errorComponent", !this.errorComponent);
+    },
+  },
 });
