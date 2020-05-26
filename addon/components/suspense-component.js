@@ -27,53 +27,58 @@ import { tracked } from "@glimmer/tracking";
  */
 
 class Task {
-  @tracked data = null;
-  @tracked isSuccess = false;
-  @tracked isError = false;
-  @tracked errorReason = null;
-
-  set() {
-    Object.assign(this, { ...arguments[0] });
-  }
-}
-
-export default class SuspenseComponent extends Component {
-  blockRender = false;
-  promise = null;
+  @tracked _state = {
+    data: null,
+    isSuccess: false,
+    isError: false,
+    errorReason: null,
+  };
   @tracked isLoading;
 
-  constructor() {
-    super(...arguments);
-
-    // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
-    // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
-    this.fastboot = getOwner(this).lookup("service:fastboot");
-
-    const blockRender = this.args.blockRender || false;
-    this.execute(blockRender);
-    this.task = new Task();
+  constructor(componentContext) {
+    this.componentContext = componentContext;
   }
-
-  // didReceiveAttrs() {
-  //   super.didReceiveAttrs(...arguments);
-  // }
 
   updateComponentValue(scopedPromised) {
     return (
-      scopedPromised === this.args.promise &&
-      !this.isDestroyed &&
-      !this.isDestroying
+      scopedPromised === this.promise &&
+      !this.componentContext.isDestroyed &&
+      !this.componentContext.isDestroying
     );
   }
 
-  execute(blockRender) {
+  // setIsLoading(promiseArg) {
+  //   const promiseOrCallback = promiseArg;
+  //   let promise;
+
+  //   if (typeof promiseOrCallback === "function") {
+  //     promise = promiseOrCallback();
+  //   } else {
+  //     promise = promiseOrCallback;
+  //   }
+
+  //   promise.finally(() => {
+  //     debugger;
+  //
+  //   });
+
+  //   return (this.isLoading = true);
+  // }
+
+  execute(promiseArg, blockRender) {
+    debugger;
+    if (this.promise === promiseArg) {
+      return this._state;
+    }
+
+    this.promise = promiseArg;
     if (!IS_BROWSER && !blockRender) {
       // we are not supposed to block rendering on the server
       return null;
     }
 
-    this.isLoading = true;
-    const promiseOrCallback = this.args.promise;
+    // this.isLoading = true;
+    const promiseOrCallback = promiseArg;
     let promise;
 
     if (typeof promiseOrCallback === "function") {
@@ -82,32 +87,31 @@ export default class SuspenseComponent extends Component {
       promise = promiseOrCallback;
     }
 
-    if (blockRender && this.fastboot.isFastBoot) {
+    if (blockRender && this.componentContext.fastboot.isFastBoot) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
-      this.fastboot.deferRendering(promise);
+      this.componentContext.fastboot.deferRendering(promise);
     }
 
-    return promise
+    promise
       .then((payload) => {
+        debugger;
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.task.set({
+          this._state = {
             data: payload,
             isSuccess: true,
             isError: false,
             errorReason: null,
-          });
+          };
         }
-
-        return payload;
       })
       .catch((e) => {
         if (this.updateComponentValue(promiseOrCallback)) {
-          this.task.set({
+          this._state = {
             data: null,
             isSuccess: false,
             isError: true,
             errorReason: e,
-          });
+          };
         }
 
         // https://github.com/emberjs/ember.js/issues/15569
@@ -120,5 +124,43 @@ export default class SuspenseComponent extends Component {
           this.isLoading = false;
         }
       });
+
+    this._state = {
+      data: null,
+      isSuccess: true,
+      isError: false,
+      errorReason: null,
+    };
+    return this._state;
   }
+}
+
+export default class SuspenseComponent extends Component {
+  blockRender = false;
+  promise = null;
+
+  constructor() {
+    super(...arguments);
+
+    // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
+    // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
+    this.fastboot = getOwner(this).lookup("service:fastboot");
+
+    const componentContext = this;
+
+    this.task = new Task(componentContext);
+  }
+
+  get data() {
+    const blockRender = this.args.blockRender || false;
+    const promise = this.args.promise;
+
+    return this.task.execute(promise, blockRender);
+  }
+
+  // get isLoading() {
+  //   const promise = this.args.promise;
+
+  //   return this.task.setIsLoading(promise);
+  // }
 }

@@ -1,10 +1,10 @@
 <div ...attributes>
   {{yield (hash
-      isLoading=this.isLoading
-      isSuccess=this.task.isSuccess
-      data=this.task.data
-      isError=this.task.isError
-      errorReason=this.task.errorReason
+      isLoading=this.task.isLoading
+      isSuccess=this.data.isSuccess
+      data=this.data.data
+      isError=this.data.isError
+      errorReason=this.data.errorReason
     )
   }}
 </div>

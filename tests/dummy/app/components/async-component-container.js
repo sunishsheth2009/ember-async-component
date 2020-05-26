@@ -6,6 +6,7 @@ import { debounce } from "@ember/runloop";
 
 export default Component.extend({
   errorComponent: false,
+  user: "Iron Man",
 
   promise: computed("errorComponent", function () {
     let promise;
@@ -74,6 +75,10 @@ export default Component.extend({
 
     propChangeReRender() {
       this.set("errorComponent", !this.errorComponent);
+    },
+
+    changeFunction() {
+      this.set("user", "Super Man");
     },
   },
 });
