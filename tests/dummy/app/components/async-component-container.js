@@ -1,14 +1,14 @@
-import Component from "@ember/component";
+import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
 import { later } from "@ember/runloop";
+import { action } from "@ember/object";
 import RSVP from "rsvp";
-import { computed } from "@ember/object";
-import { debounce } from "@ember/runloop";
 
-export default Component.extend({
-  errorComponent: false,
-  user: "Iron Man",
+export default class AsynComponentContainer extends Component {
+  @tracked errorComponent = false;
+  @tracked user = "Iron Man";
 
-  promise: computed("errorComponent", function () {
+  get promise() {
     let promise;
 
     if (this.errorComponent) {
@@ -23,22 +23,25 @@ export default Component.extend({
     }
 
     return RSVP.hash(promise);
-  }).readOnly(),
+  }
 
-  getUser(name = "Iron Man") {
+  @action
+  getUser(name) {
+    const superHero = name || this.user;
+
     return new Promise((resolve) => {
       later(
         this,
         () => {
           resolve({
-            name,
+            name: superHero,
             time: Date.now(),
           });
         },
         1000
       );
     });
-  },
+  }
 
   getEvents() {
     return new Promise((resolve, reject) => {
@@ -50,11 +53,11 @@ export default Component.extend({
         2000
       );
     }).catch((e) => {
-      this.set("errorMessage", e);
+      this.errorMessage = e;
 
       throw e;
     });
-  },
+  }
 
   getError() {
     return new Promise((resolve, reject) => {
@@ -66,19 +69,15 @@ export default Component.extend({
         2500
       );
     });
-  },
+  }
 
-  actions: {
-    refreshModel() {
-      debounce(this, "notifyPropertyChange", "promise", 200);
-    },
+  @action
+  refreshModel() {
+    this.user = "Super Man";
+  }
 
-    propChangeReRender() {
-      this.set("errorComponent", !this.errorComponent);
-    },
-
-    changeFunction() {
-      this.set("user", "Super Man");
-    },
-  },
-});
+  @action
+  propChangeReRender() {
+    this.errorComponent = !this.errorComponent;
+  }
+}

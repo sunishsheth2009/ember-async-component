@@ -1,6 +1,5 @@
 <h3>Passing in a promise</h3>
 {{#component "ember-async-component@suspense-component" promise=this.promise blockRender=false as |task|}}
-  {{log task}}
   {{#if task.isLoading}}
     Loading...
   {{else if task.isSuccess}}
@@ -10,11 +9,11 @@
   {{/if}}
 {{/component}}
 
-<button type="button" onclick={{action "refreshModel"}}>Refresh</button>
-<button type="button" onclick={{action "propChangeReRender"}}>Change Promise</button>
+<button type="button" {{on "click" this.refreshModel}}>Refresh</button>
+<button type="button" {{on "click" this.propChangeReRender}}>Change Promise</button>
 
 <h3>Passing in a promise as a function</h3>
-{{#component "ember-async-component@suspense-component" promise=(function-apply this.getUser this.user) blockRender=false as |task|}}
+{{#component "ember-async-component@suspense-component" promise=this.getUser blockRender=false as |task|}}
   {{#if task.isLoading}}
     Loading...
   {{else if task.isSuccess}}
@@ -24,4 +23,4 @@
   {{/if}}
 {{/component}}
 
-<button type="button" onclick={{action "changeFunction"}}>Refresh</button>
+<button type="button" {{on "click" this.refreshModel}}>Refresh</button>
