@@ -11,11 +11,11 @@ import { tracked } from "@glimmer/tracking";
  * @param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
  * ...
  * @example
- *   {{#suspense-component
- *     promise=promise
- *     blockRender=false
+ *   <SuspenseComponent
+ *     @promise={{this.promise}}
+ *     @blockRender={{false}}
  *     as |task|
- *   }}
+ *   >
  *     {{#if task.isLoading}}
  *       Loading...
  *     {{else if task.isSuccess}}
@@ -23,7 +23,7 @@ import { tracked } from "@glimmer/tracking";
  *     {{else if task.isError}}
  *       Error occurred: {{task.errorReason}}
  *     {{/if}}
- *   {{/suspense-component}}
+ *   </SuspenseComponent>
  */
 
 class Task {

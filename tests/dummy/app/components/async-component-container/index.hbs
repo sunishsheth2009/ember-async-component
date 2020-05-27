@@ -1,5 +1,5 @@
 <h3>Passing in a promise</h3>
-{{#component "ember-async-component@suspense-component" promise=this.promise blockRender=false as |task|}}
+<SuspenseComponent @promise={{this.promise}} @blockRender={{false}} as |task|>
   {{#if task.isLoading}}
     Loading...
   {{else if task.isSuccess}}
@@ -7,13 +7,13 @@
   {{else if task.isError}}
     Error occurred: {{task.errorReason}}
   {{/if}}
-{{/component}}
+</SuspenseComponent>
 
 <button type="button" {{on "click" this.refreshModel}}>Refresh</button>
 <button type="button" {{on "click" this.propChangeReRender}}>Change Promise</button>
 
 <h3>Passing in a promise as a function</h3>
-{{#component "ember-async-component@suspense-component" promise=this.getUser blockRender=false as |task|}}
+<SuspenseComponent @promise={{this.getUser}} @blockRender={{false}} as |task|>
   {{#if task.isLoading}}
     Loading...
   {{else if task.isSuccess}}
@@ -21,6 +21,6 @@
   {{else if task.isError}}
     Error occurred: {{task.errorReason}}
   {{/if}}
-{{/component}}
+</SuspenseComponent>
 
 <button type="button" {{on "click" this.refreshModel}}>Refresh</button>
