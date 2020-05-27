@@ -27,111 +27,16 @@ import { tracked } from "@glimmer/tracking";
  */
 
 class Task {
-  @tracked _state = {
-    data: null,
-    isSuccess: false,
-    isError: false,
-    errorReason: null,
-  };
-  @tracked isLoading;
+  @tracked data = null;
+  @tracked errorReason = null;
+  @tracked isLoading = false;
 
-  constructor(componentContext) {
-    this.componentContext = componentContext;
+  get isError() {
+    return Boolean(this.errorReason);
   }
 
-  updateComponentValue(scopedPromised) {
-    return (
-      scopedPromised === this.promise &&
-      !this.componentContext.isDestroyed &&
-      !this.componentContext.isDestroying
-    );
-  }
-
-  // setIsLoading(promiseArg) {
-  //   const promiseOrCallback = promiseArg;
-  //   let promise;
-
-  //   if (typeof promiseOrCallback === "function") {
-  //     promise = promiseOrCallback();
-  //   } else {
-  //     promise = promiseOrCallback;
-  //   }
-
-  //   promise.finally(() => {
-  //     debugger;
-  //
-  //   });
-
-  //   return (this.isLoading = true);
-  // }
-
-  execute(promiseArg, blockRender) {
-    debugger;
-    if (this.promise === promiseArg) {
-      return this._state;
-    }
-
-    this.promise = promiseArg;
-    if (!IS_BROWSER && !blockRender) {
-      // we are not supposed to block rendering on the server
-      return null;
-    }
-
-    // this.isLoading = true;
-    const promiseOrCallback = promiseArg;
-    let promise;
-
-    if (typeof promiseOrCallback === "function") {
-      promise = promiseOrCallback();
-    } else {
-      promise = promiseOrCallback;
-    }
-
-    if (blockRender && this.componentContext.fastboot.isFastBoot) {
-      // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
-      this.componentContext.fastboot.deferRendering(promise);
-    }
-
-    promise
-      .then((payload) => {
-        debugger;
-        if (this.updateComponentValue(promiseOrCallback)) {
-          this._state = {
-            data: payload,
-            isSuccess: true,
-            isError: false,
-            errorReason: null,
-          };
-        }
-      })
-      .catch((e) => {
-        if (this.updateComponentValue(promiseOrCallback)) {
-          this._state = {
-            data: null,
-            isSuccess: false,
-            isError: true,
-            errorReason: e,
-          };
-        }
-
-        // https://github.com/emberjs/ember.js/issues/15569
-        if (!Ember.testing) {
-          throw e;
-        }
-      })
-      .finally(() => {
-        if (this.updateComponentValue(promiseOrCallback)) {
-          this.isLoading = false;
-        }
-      });
-
-    this._state = {
-      data: null,
-      isSuccess: true,
-      isError: false,
-      errorReason: null,
-    };
-    return this._state;
+  get isSuccess() {
+    return Boolean(this.data);
   }
 }
 
@@ -145,22 +50,59 @@ export default class SuspenseComponent extends Component {
     // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
     // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
     this.fastboot = getOwner(this).lookup("service:fastboot");
-
-    const componentContext = this;
-
-    this.task = new Task(componentContext);
   }
 
   get data() {
     const blockRender = this.args.blockRender || false;
     const promise = this.args.promise;
 
-    return this.task.execute(promise, blockRender);
+    return this.execute(promise, blockRender);
   }
 
-  // get isLoading() {
-  //   const promise = this.args.promise;
+  execute(promiseArg, blockRender) {
+    const task = new Task();
 
-  //   return this.task.setIsLoading(promise);
-  // }
+    if (this.promise === promiseArg) {
+      return this.task;
+    }
+
+    this.task = task;
+    this.promise = promiseArg;
+    if (!IS_BROWSER && !blockRender) {
+      // we are not supposed to block rendering on the server
+      return null;
+    }
+
+    task.isLoading = true;
+    const promiseOrCallback = promiseArg;
+    let promise;
+
+    if (typeof promiseOrCallback === "function") {
+      promise = promiseOrCallback();
+    } else {
+      promise = promiseOrCallback;
+    }
+
+    if (blockRender && this.fastboot.isFastBoot) {
+      // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
+      this.fastboot.deferRendering(promise);
+    }
+
+    promise.then(
+      (payload) => {
+        task.data = payload;
+        task.isLoading = false;
+      },
+      (e) => {
+        task.errorReason = e;
+        task.isLoading = false;
+        // https://github.com/emberjs/ember.js/issues/15569
+        if (!Ember.testing) {
+          throw e;
+        }
+      }
+    );
+
+    return task;
+  }
 }

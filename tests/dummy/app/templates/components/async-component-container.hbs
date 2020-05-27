@@ -1,5 +1,6 @@
 <h3>Passing in a promise</h3>
 {{#component "ember-async-component@suspense-component" promise=this.promise blockRender=false as |task|}}
+  {{log task}}
   {{#if task.isLoading}}
     Loading...
   {{else if task.isSuccess}}
