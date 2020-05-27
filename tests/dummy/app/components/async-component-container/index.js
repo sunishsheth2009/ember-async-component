@@ -25,24 +25,6 @@ export default class AsynComponentContainer extends Component {
     return RSVP.hash(promise);
   }
 
-  @action
-  getUser(name) {
-    const superHero = name || this.user;
-
-    return new Promise((resolve) => {
-      later(
-        this,
-        () => {
-          resolve({
-            name: superHero,
-            time: Date.now(),
-          });
-        },
-        1000
-      );
-    });
-  }
-
   getEvents() {
     return new Promise((resolve, reject) => {
       later(
@@ -67,6 +49,24 @@ export default class AsynComponentContainer extends Component {
           reject("Uh oh, this promise was rejected");
         },
         2500
+      );
+    });
+  }
+
+  @action
+  getUser(name) {
+    const superHero = name || this.user;
+
+    return new Promise((resolve) => {
+      later(
+        this,
+        () => {
+          resolve({
+            name: superHero,
+            time: Date.now(),
+          });
+        },
+        1000
       );
     });
   }
