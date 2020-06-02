@@ -61,19 +61,6 @@ export default class SuspenseComponent extends Component {
 
   execute(promiseArg, blockRender) {
     const task = new Task();
-
-    if (this.promise === promiseArg) {
-      return this.task;
-    }
-
-    this.task = task;
-    this.promise = promiseArg;
-    if (!IS_BROWSER && !blockRender) {
-      // we are not supposed to block rendering on the server
-      return null;
-    }
-
-    task.isLoading = true;
     const promiseOrCallback = promiseArg;
     let promise;
 
@@ -82,6 +69,19 @@ export default class SuspenseComponent extends Component {
     } else {
       promise = promiseOrCallback;
     }
+
+    if (this.promise === promise) {
+      return this.task;
+    }
+
+    this.task = task;
+    this.promise = promise;
+    if (!IS_BROWSER && !blockRender) {
+      // we are not supposed to block rendering on the server
+      return null;
+    }
+
+    task.isLoading = true;
 
     if (blockRender && this.fastboot.isFastBoot) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
