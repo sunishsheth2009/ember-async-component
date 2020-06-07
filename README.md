@@ -6,8 +6,8 @@ with [ember-cli-fastboot](https://github.com/ember-fastboot/ember-cli-fastboot)
 
 ## Compatibility
 
-- Ember.js v3.14 or above
-- Ember CLI v2.13 or above
+- Ember.js v3.16 or above
+- Ember CLI v3.12 or above
 - Node.js v10 or above
 
 ## Installation
@@ -24,7 +24,7 @@ This is the suspense component which be used to by container components when mak
 @param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
 
 ```
-<SuspenseComponent
+<Suspense
  @promise={{this.promise}}
  @blockRender={{false}}
  as |task|
@@ -36,7 +36,7 @@ This is the suspense component which be used to by container components when mak
  {{else if task.isError}}
    Error occurred: {{task.errorReason}}
  {{/if}}
-</SuspenseComponent>
+</Suspense>
 ```
 
 ## Contributing

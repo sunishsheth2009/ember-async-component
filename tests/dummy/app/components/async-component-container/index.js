@@ -1,12 +1,12 @@
-import Component from "@glimmer/component";
-import { tracked } from "@glimmer/tracking";
-import { later } from "@ember/runloop";
-import { action } from "@ember/object";
-import RSVP from "rsvp";
+import Component from '@glimmer/component';
+import {tracked} from '@glimmer/tracking';
+import {later} from '@ember/runloop';
+import {action} from '@ember/object';
+import RSVP from 'rsvp';
 
 export default class AsynComponentContainer extends Component {
   @tracked errorComponent = false;
-  @tracked user = "Iron Man";
+  @tracked user = 'Iron Man';
 
   get promise() {
     let promise;
@@ -14,11 +14,11 @@ export default class AsynComponentContainer extends Component {
     if (this.errorComponent) {
       promise = {
         errorRequest: this.getError(),
-        eventsRequest: this.getEvents(),
+        eventsRequest: this.getEvents()
       };
     } else {
       promise = {
-        userRequest: this.getUser(),
+        userRequest: this.getUser()
       };
     }
 
@@ -30,7 +30,7 @@ export default class AsynComponentContainer extends Component {
       later(
         this,
         () => {
-          reject("Events not found");
+          reject('Events not found');
         },
         2000
       );
@@ -46,7 +46,7 @@ export default class AsynComponentContainer extends Component {
       later(
         this,
         () => {
-          reject("Uh oh, this promise was rejected");
+          reject('Uh oh, this promise was rejected');
         },
         2500
       );
@@ -63,7 +63,7 @@ export default class AsynComponentContainer extends Component {
         () => {
           resolve({
             name: superHero,
-            time: Date.now(),
+            time: Date.now()
           });
         },
         1000
@@ -73,7 +73,7 @@ export default class AsynComponentContainer extends Component {
 
   @action
   refreshModel() {
-    this.user = "Super Man";
+    this.user = 'Super Man';
   }
 
   @action

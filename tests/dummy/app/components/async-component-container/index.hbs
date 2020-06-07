@@ -1,26 +1,26 @@
 <h3>Passing in a promise</h3>
-<SuspenseComponent @promise={{this.promise}} @blockRender={{false}} as |task|>
+<Suspense @promise={{this.promise}} @blockRender={{false}} as |task|>
   {{#if task.isLoading}}
-    Loading...
+  Loading...
   {{else if task.isSuccess}}
-    {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
+  {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
   {{else if task.isError}}
-    Error occurred: {{task.errorReason}}
+  Error occurred: {{task.errorReason}}
   {{/if}}
-</SuspenseComponent>
+</Suspense>
 
 <button type="button" {{on "click" this.refreshModel}}>Refresh</button>
 <button type="button" {{on "click" this.propChangeReRender}}>Change Promise</button>
 
 <h3>Passing in a promise as a function</h3>
-<SuspenseComponent @promise={{this.getUser}} @blockRender={{false}} as |task|>
+<Suspense @promise={{this.getUser}} @blockRender={{false}} as |task|>
   {{#if task.isLoading}}
-    Loading...
+  Loading...
   {{else if task.isSuccess}}
-    {{task.data.name}}: {{task.data.time}}
+  {{task.data.name}}: {{task.data.time}}
   {{else if task.isError}}
-    Error occurred: {{task.errorReason}}
+  Error occurred: {{task.errorReason}}
   {{/if}}
-</SuspenseComponent>
+</Suspense>
 
 <button type="button" {{on "click" this.refreshModel}}>Refresh</button>

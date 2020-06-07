@@ -1,8 +1,8 @@
-import { getOwner } from "@ember/application";
-import Component from "@glimmer/component";
-import Ember from "ember";
-import IS_BROWSER from "ember-async-component/utils/is-browser";
-import { tracked } from "@glimmer/tracking";
+import { getOwner } from '@ember/application';
+import Component from '@glimmer/component';
+import Ember from 'ember';
+import IS_BROWSER from '../../utils/is-browser';
+import { tracked } from '@glimmer/tracking';
 
 /**
  * This is the suspense component which be used to by container components when making API calls in a component.
@@ -11,7 +11,7 @@ import { tracked } from "@glimmer/tracking";
  * @param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
  * ...
  * @example
- *   <SuspenseComponent
+ *   <Suspense
  *     @promise={{this.promise}}
  *     @blockRender={{false}}
  *     as |task|
@@ -23,7 +23,7 @@ import { tracked } from "@glimmer/tracking";
  *     {{else if task.isError}}
  *       Error occurred: {{task.errorReason}}
  *     {{/if}}
- *   </SuspenseComponent>
+ *   </Suspense>
  */
 
 class Task {
@@ -40,7 +40,7 @@ class Task {
   }
 }
 
-export default class SuspenseComponent extends Component {
+export default class Suspense extends Component {
   blockRender = false;
   promise = null;
 
@@ -49,7 +49,7 @@ export default class SuspenseComponent extends Component {
 
     // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
     // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
-    this.fastboot = getOwner(this).lookup("service:fastboot");
+    this.fastboot = getOwner(this).lookup('service:fastboot');
   }
 
   get data() {
@@ -61,14 +61,7 @@ export default class SuspenseComponent extends Component {
 
   execute(promiseArg, blockRender) {
     const task = new Task();
-    const promiseOrCallback = promiseArg;
-    let promise;
-
-    if (typeof promiseOrCallback === "function") {
-      promise = promiseOrCallback();
-    } else {
-      promise = promiseOrCallback;
-    }
+    let promise = typeof promiseArg === 'function' ? promiseArg() : promiseArg;
 
     if (this.promise === promise) {
       return this.task;
