@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
-import {tracked} from '@glimmer/tracking';
-import {later} from '@ember/runloop';
-import {action} from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { later } from '@ember/runloop';
+import { action } from '@ember/object';
 import RSVP from 'rsvp';
 
 export default class AsynComponentContainer extends Component {

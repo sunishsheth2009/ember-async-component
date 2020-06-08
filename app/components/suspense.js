@@ -1,1 +1,1 @@
-export { default } from "ember-async-component/components/suspense";
+export { default } from 'ember-async-component/components/suspense';

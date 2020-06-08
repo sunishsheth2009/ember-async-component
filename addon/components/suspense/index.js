@@ -3,6 +3,7 @@ import Component from '@glimmer/component';
 import Ember from 'ember';
 import IS_BROWSER from '../../utils/is-browser';
 import { tracked } from '@glimmer/tracking';
+import { assert } from '@ember/debug';
 
 /**
  * This is the suspense component which be used to by container components when making API calls in a component.
@@ -41,27 +42,31 @@ class Task {
 }
 
 export default class Suspense extends Component {
-  blockRender = false;
-  promise = null;
-
   constructor() {
     super(...arguments);
 
     // Recommended way to get the service in the addons and not forcing fastboot for every consuming application
     // https://ember-fastboot.com/docs/addon-author-guide#accessing-the-fastboot-service
     this.fastboot = getOwner(this).lookup('service:fastboot');
+    this.blockRender = this.args.blockRender || false;
+
+    assert(
+      'ember-cli-fastboot dependency should be installed if we want to block render',
+      !(this.blockRender && !this.fastboot)
+    );
   }
 
   get data() {
-    const blockRender = this.args.blockRender || false;
-    const promise = this.args.promise;
+    if (!IS_BROWSER && !blockRender) {
+      // we are not supposed to block rendering on the server
+      return null;
+    }
 
-    return this.execute(promise, blockRender);
-  }
-
-  execute(promiseArg, blockRender) {
+    const blockRender = this.blockRender;
+    const promiseArg = this.args.promise;
     const task = new Task();
-    let promise = typeof promiseArg === 'function' ? promiseArg() : promiseArg;
+    const promise =
+      typeof promiseArg === 'function' ? promiseArg() : promiseArg;
 
     if (this.promise === promise) {
       return this.task;
@@ -69,10 +74,6 @@ export default class Suspense extends Component {
 
     this.task = task;
     this.promise = promise;
-    if (!IS_BROWSER && !blockRender) {
-      // we are not supposed to block rendering on the server
-      return null;
-    }
 
     task.isLoading = true;
 
