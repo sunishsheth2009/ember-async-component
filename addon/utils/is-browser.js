@@ -5,6 +5,7 @@
  * @constant IS_BROWSER
  * @public
  */
-const IS_BROWSER = typeof window !== 'undefined' && window && window.appEnvironment !== 'node';
+const IS_BROWSER =
+  typeof window !== 'undefined' && window && window.appEnvironment !== 'node';
 
 export default IS_BROWSER;

@@ -1,27 +1,22 @@
-ember-async-component
-==============================================================================
+# ember-async-component
 
 This ember addon is used for building promise aware container components which
 handles success, loading and error states. This component also works seemlessly
 with [ember-cli-fastboot](https://github.com/ember-fastboot/ember-cli-fastboot)
 
-Compatibility
-------------------------------------------------------------------------------
+## Compatibility
 
-* Ember.js v2.18 or above
-* Ember CLI v2.13 or above
+- Ember.js v3.16 or above
+- Ember CLI v3.12 or above
+- Node.js v10 or above
 
-
-Installation
-------------------------------------------------------------------------------
+## Installation
 
 ```
 ember install ember-async-component
 ```
 
-
-Usage
-------------------------------------------------------------------------------
+## Usage
 
 This is the suspense component which be used to by container components when making API calls in a component. This component handles server side rendering issues and loading and error states out of the box for the consumer
 
@@ -29,28 +24,25 @@ This is the suspense component which be used to by container components when mak
 @param {boolean} [blockRender] Default is false. Used for deciding if the fastboot server should wait for the API call to complete
 
 ```
-{{#suspense-component
-  promise=promise
-  blockRender=false
-  as |task|
-}}
-  {{#if task.isLoading}}
-    Loading...
-  {{else if task.isSuccess}}
-    {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
-  {{else if task.isError}}
-    Error occurred: {{task.errorReason}}
-  {{/if}}
-{{/suspense-component}}
+<Suspense
+ @promise={{this.promise}}
+ @blockRender={{false}}
+ as |task|
+>
+ {{#if task.isLoading}}
+   Loading...
+ {{else if task.isSuccess}}
+   {{task.data.userRequest.name}}: {{task.data.userRequest.time}}
+ {{else if task.isError}}
+   Error occurred: {{task.errorReason}}
+ {{/if}}
+</Suspense>
 ```
 
-Contributing
-------------------------------------------------------------------------------
+## Contributing
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-
-License
-------------------------------------------------------------------------------
+## License
 
 This project is licensed under the [MIT License](LICENSE.md).
