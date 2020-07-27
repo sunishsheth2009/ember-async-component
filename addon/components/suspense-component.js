@@ -43,6 +43,8 @@ export default Component.extend({
   },
 
   didReceiveAttrs() {
+    console.log("In didReceieveAttrs");
+
     this._super(...arguments);
     this.execute();
   },
@@ -57,7 +59,11 @@ export default Component.extend({
       return null;
     }
 
-    this.set('isLoading', true);
+    this.set('task', {
+      isLoading: true,
+      data: null
+    });
+    // this.set('isLoading', true);
     const promiseOrCallback = this.get('promise');
     let promise;
 
@@ -76,6 +82,7 @@ export default Component.extend({
       .then((payload) => {
         if (this.updateComponentValue(promiseOrCallback)) {
           this.set('task', {
+            isLoading: false,
             data: payload,
             isSuccess: true,
             isError: false,
@@ -88,6 +95,7 @@ export default Component.extend({
       .catch((e) => {
         if (this.updateComponentValue(promiseOrCallback)) {
           this.set('task', {
+            isLoading: false,
             data: null,
             isSuccess: false,
             isError: true,
@@ -98,11 +106,6 @@ export default Component.extend({
         // https://github.com/emberjs/ember.js/issues/15569
         if (!Ember.testing) {
           throw e;
-        }
-      })
-      .finally(() => {
-        if (this.updateComponentValue(promiseOrCallback)) {
-          this.set('isLoading', false);
         }
       });
   }

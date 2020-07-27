@@ -1,0 +1,12 @@
+{{#suspense-component
+  promise=model.promiseTrue
+  blockRender=false
+  as |task|
+}}
+  {{#if task.isLoading}}
+    Loading
+  {{else}}
+    {{task.data}}
+    <button type="button" onclick={{action "refresh"}}>Refresh</button>
+  {{/if}}
+{{/suspense-component}}
