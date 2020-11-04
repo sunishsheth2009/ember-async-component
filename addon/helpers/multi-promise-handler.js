@@ -6,7 +6,7 @@ import { hashSettled } from 'rsvp';
  * component data schema, but embedded to each response, there will be an assigned state.
  * @example
  *   {{#suspense-component
- *     promise=(ember-async-component$multi-promise-handler promiseOne=promise.first promiseTwo=promise.second)
+ *     promise=(multi-promise-handler promiseOne=promise.first promiseTwo=promise.second)
  *     blockRender=false
  *     as |task|
  *   }}
