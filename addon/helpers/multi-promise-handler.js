@@ -1,5 +1,5 @@
 import Helper from '@ember/component/helper';
-
+import { hashSettled } from 'rsvp';
 /**
  * This is the multi-promise-handler helper. It allows for passing in multiple network requests, while offering the
  * ability to gracefully handle the response for each promise. The output would thus still leverage the suspense
@@ -13,16 +13,16 @@ import Helper from '@ember/component/helper';
  *     {{#if task.isLoading}}
  *       <div>Loading...</div>
  *     {{else if task.isSuccess}}
- *       {{#if task.data.promiseOne.isSuccess}}
- *         <div>{{task.data.promiseOne.data.userRequest.name}}
- *       {{else if task.data.promiseOne.isError}}
- *         <div>Error: {{task.data.promiseOne.errorReason}}
+ *       {{#if (eq task.data.promiseOne.state "fulfilled")}}
+ *         <div>{{task.data.promiseOne.value.userRequest.name}}
+ *       {{else if (eq task.data.promiseOne.state "rejected"}}
+ *         <div>Error: {{task.data.promiseOne.reason}}
  *       {{/if}}
  * 
- *       {{#if task.data.promiseTwo.isSuccess}}
- *         <div>{{task.data.promiseTwo.data.userRequest.name}}
- *       {{else if task.data.promiseTwo.isError}}
- *         <div>Error: {{task.data.promiseTwo.errorReason}}
+ *       {{#if (eq task.data.promiseTwo.state "fulfilled")}}
+ *         <div>{{task.data.promiseTwo.value.userRequest.name}}
+ *       {{else (eq if task.data.promiseTwo.state "rejected"}}
+ *         <div>Error: {{task.data.promiseTwo.reason}}
  *       {{/if}}
  *     {{else if task.isError}}
  *       <div>Error occurred: {{task.errorReason}}</div>
@@ -30,35 +30,7 @@ import Helper from '@ember/component/helper';
  *   {{/suspense-component}}
  */
 export default Helper.extend({
-  promiseCallback(promises, payload) {
-    if (promises.length) {
-      const [currentPromiseCategory, currentPromise] = promises.pop();
-      return currentPromise
-      .then((resolvedPromise) => this.successCallback(resolvedPromise, promises, currentPromiseCategory, payload))
-      .catch((resolvedPromise) => this.failCallback(resolvedPromise, promises, currentPromiseCategory, payload));
-    }
-    return payload;
-  },
-  successCallback(resolvedPromise, promises, category, payload) {
-    payload[category] = {
-      data: resolvedPromise,
-      isSuccess: true,
-      isError: false,
-      errorReason: null
-    }
-    return this.promiseCallback(promises, payload);
-  },
-  failCallback(resolvedPromise, promises, category, payload) {
-    payload[category] = {
-      data: null,
-      isSuccess: false,
-      isError: true,
-      errorReason: resolvedPromise
-    }
-    return this.promiseCallback(promises, payload);
-  },
-  compute(args, promisesObj) {
-    const promises = Object.entries(promisesObj);
-    return this.promiseCallback(promises, {});
+  compute(args, hash) {
+    return hashSettled(hash);
   }
 });

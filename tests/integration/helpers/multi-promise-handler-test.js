@@ -3,7 +3,6 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, waitUntil } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { defer as Defer } from 'rsvp';
-
 module('Integration | Helper | multi-promise-handler', function (hooks) {
   setupRenderingTest(hooks);
 
@@ -26,14 +25,14 @@ module('Integration | Helper | multi-promise-handler', function (hooks) {
             Loading...
           </div>
         {{else if task.isSuccess}}
-          {{#if task.data.promiseOne.isSuccess}}
+          {{#if (eq task.data.promiseOne.state "fulfilled")}}
             <div data-test-async-success-one>
-              {{task.data.promiseOne.data.name}}
+              {{task.data.promiseOne.value.name}}
             </div>
           {{/if}}
-          {{#if task.data.promiseTwo.isSuccess}}
+          {{#if (eq task.data.promiseTwo.state "fulfilled")}}
             <div data-test-async-success-two>
-              {{task.data.promiseTwo.data.name}}
+              {{task.data.promiseTwo.value.name}}
             </div>
           {{/if}}
         {{else if task.isError}}
@@ -58,7 +57,7 @@ module('Integration | Helper | multi-promise-handler', function (hooks) {
     assert
       .dom(dataSelectorOne)
       .hasText('Harry Potter', 'success section is rendered');
-      assert
+    assert
       .dom(dataSelectorTwo)
       .hasText('Hermoine Granger', 'success section is rendered');
   });
@@ -82,18 +81,18 @@ module('Integration | Helper | multi-promise-handler', function (hooks) {
             Loading...
           </div>
         {{else if task.isSuccess}}
-          {{#if task.data.promiseOne.isSuccess}}
+          {{#if (eq task.data.promiseOne.state "fulfilled")}}
             <div data-test-async-success-one>
-              {{task.data.promiseOne.data.name}}
+              {{task.data.promiseOne.value.name}}
             </div>
           {{/if}}
-          {{#if task.data.promiseTwo.isSuccess}}
+          {{#if (eq task.data.promiseTwo.state "fulfilled")}}
             <div data-test-async-success-two>
-              {{task.data.promiseTwo.data.name}}
+              {{task.data.promiseTwo.value.name}}
             </div>
-          {{else if task.data.promiseTwo.isError}}
+          {{else if (eq task.data.promiseTwo.state "rejected")}}
             <div data-test-async-error-two>
-              {{task.data.promiseTwo.errorReason}}
+              {{task.data.promiseTwo.reason}}
             </div>
           {{/if}}
         {{else if task.isError}}
@@ -112,12 +111,17 @@ module('Integration | Helper | multi-promise-handler', function (hooks) {
     assert
       .dom(loadingSelector)
       .doesNotExist('Expected loading to not be rendered');
-    assert.dom(dataSelectorTwo).doesNotExist('Expected second success to not be rendered');
+    assert
+      .dom(dataSelectorTwo)
+      .doesNotExist('Expected second success to not be rendered');
     assert
       .dom(dataSelectorOne)
       .hasText('Harry Potter', 'success section is rendered for first promise');
-      assert
+    assert
       .dom(dataErrorSelectorTwo)
-      .hasText('Unable to load', 'error section is rendered for second promise');
+      .hasText(
+        'Unable to load',
+        'error section is rendered for second promise'
+      );
   });
 });
