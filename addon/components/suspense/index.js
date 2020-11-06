@@ -72,6 +72,12 @@ export default class Suspense extends Component {
       return this.task;
     }
 
+    if (!promise.then) {
+      task.data = promise;
+
+      return task;
+    }
+
     this.task = task;
     this.promise = promise;
 

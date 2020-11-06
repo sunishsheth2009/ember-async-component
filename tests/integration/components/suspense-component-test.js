@@ -54,6 +54,50 @@ module('Integration | Component | suspense-component', function (hooks) {
       .hasText('Harry Potter', 'success section is rendered');
   });
 
+  test('Component renders in success case if input is an object', async function (assert) {
+    const loadingSelector = '[data-test-async-loading]';
+    const errorSelector = '[data-test-async-error]';
+    const dataSelector = '[data-test-async-success]';
+
+    this.regularObject = {
+      name: 'Harry Potter'
+    };
+
+    await render(hbs`
+      <Suspense
+        @promise={{regularObject}}
+        as |task|
+      >
+        {{#if task.isLoading}}
+          <div data-test-async-loading>
+            Loading...
+          </div>
+        {{else if task.isSuccess}}
+          <div data-test-async-success>
+            {{task.data.name}}
+          </div>
+        {{else if task.isError}}
+          <div data-test-async-error>
+            Error message...
+          </div>
+        {{/if}}
+      </Suspense>
+    `);
+
+    assert.dom(loadingSelector)
+    .doesNotExist('Expected loading to not be rendered');
+
+    await waitUntil(() => !find(loadingSelector));
+
+    assert
+      .dom(loadingSelector)
+      .doesNotExist('Expected loading to not be rendered');
+    assert.dom(errorSelector).doesNotExist('Expected error to not be rendered');
+    assert
+      .dom(dataSelector)
+      .hasText('Harry Potter', 'success section is rendered');
+  });
+
   test('Component renders in error case as expected', async function (assert) {
     const loadingSelector = '[data-test-async-loading]';
     const errorSelector = '[data-test-async-error]';
