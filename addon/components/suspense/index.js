@@ -31,13 +31,10 @@ class Task {
   @tracked data = null;
   @tracked errorReason = null;
   @tracked isLoading = false;
+  @tracked isSuccess = false;
 
   get isError() {
     return Boolean(this.errorReason);
-  }
-
-  get isSuccess() {
-    return Boolean(this.data);
   }
 }
 
@@ -74,6 +71,7 @@ export default class Suspense extends Component {
 
     if (!promise.then) {
       task.data = promise;
+      task.isSuccess = true;
 
       return task;
     }
@@ -92,6 +90,7 @@ export default class Suspense extends Component {
       (payload) => {
         task.data = payload;
         task.isLoading = false;
+        task.isSuccess = true;
       },
       (e) => {
         task.errorReason = e;
