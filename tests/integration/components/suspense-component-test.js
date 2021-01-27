@@ -54,6 +54,45 @@ module('Integration | Component | suspense-component', function (hooks) {
       .hasText('Harry Potter', 'success section is rendered');
   });
 
+  test('Component renders in success case as when promise resolves as `false`', async function (assert) {
+    const loadingSelector = '[data-test-async-loading]';
+    const errorSelector = '[data-test-async-error]';
+    const dataSelector = '[data-test-async-success]';
+
+    this.deferred = new Defer();
+    this.deferredPromise = this.deferred.promise;
+
+    await render(hbs`
+      <Suspense
+        @promise={{deferredPromise}}
+        as |task|
+      >
+        {{#if task.isLoading}}
+          <div data-test-async-loading>
+            Loading...
+          </div>
+        {{else if task.isSuccess}}
+          <div data-test-async-success>Success</div>
+        {{else if task.isError}}
+          <div data-test-async-error>
+            Error message...
+          </div>
+        {{/if}}
+      </Suspense>
+    `);
+
+    assert.dom(loadingSelector).exists('loading is rendered');
+
+    this.deferred.resolve(false);
+    await waitUntil(() => !find(loadingSelector));
+
+    assert
+      .dom(loadingSelector)
+      .doesNotExist('Expected loading to not be rendered');
+    assert.dom(errorSelector).doesNotExist('Expected error to not be rendered');
+    assert.dom(dataSelector).hasText('Success', 'success section is rendered');
+  });
+
   test('Component renders in success case if input is an object', async function (assert) {
     const loadingSelector = '[data-test-async-loading]';
     const errorSelector = '[data-test-async-error]';
@@ -84,8 +123,9 @@ module('Integration | Component | suspense-component', function (hooks) {
       </Suspense>
     `);
 
-    assert.dom(loadingSelector)
-    .doesNotExist('Expected loading to not be rendered');
+    assert
+      .dom(loadingSelector)
+      .doesNotExist('Expected loading to not be rendered');
 
     await waitUntil(() => !find(loadingSelector));
 
