@@ -14,8 +14,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
-    'plugin:prettier/recommended',
-    'plugin:node/recommended'
+    'plugin:prettier/recommended'
   ],
   env: {
     browser: true
@@ -49,6 +48,7 @@ module.exports = {
         node: true
       },
       plugins: ['node'],
+      extends: ['plugin:node/recommended'],
       rules: Object.assign(
         {},
         require('eslint-plugin-node').configs.recommended.rules,
