@@ -18,7 +18,7 @@ import { hashSettled } from 'rsvp';
  *       {{else if (eq task.data.promiseOne.state "rejected"}}
  *         <div>Error: {{task.data.promiseOne.reason}}
  *       {{/if}}
- * 
+ *
  *       {{#if (eq task.data.promiseTwo.state "fulfilled")}}
  *         <div>{{task.data.promiseTwo.value.userRequest.name}}
  *       {{else (eq if task.data.promiseTwo.state "rejected"}}
