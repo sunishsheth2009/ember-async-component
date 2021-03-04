@@ -84,6 +84,7 @@ export default class Suspense extends Component {
     if (blockRender && this.fastboot.isFastBoot) {
       // https://github.com/ember-fastboot/ember-cli-fastboot#delaying-the-server-response
       this.fastboot.deferRendering(promise);
+      return task;
     }
 
     promise.then(
