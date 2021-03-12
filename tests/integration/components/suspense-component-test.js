@@ -5,6 +5,7 @@ import hbs from 'htmlbars-inline-precompile';
 import { defer as Defer } from 'rsvp';
 import Service from '@ember/service';
 import sinon from 'sinon';
+import * as IS_BROWSER from 'ember-async-component/utils/is-browser';
 
 module('Integration | Component | suspense-component', function (hooks) {
   setupRenderingTest(hooks);
@@ -244,5 +245,38 @@ module('Integration | Component | suspense-component', function (hooks) {
       this.deferRendering.calledWith(this.deferredPromise),
       'fastboot service was called correctly'
     );
+  });
+
+  test('Component renders the loading state on the server correctly', async function (assert) {
+    const loadingSelector = '[data-test-async-loading]';
+
+    this.sandbox = sinon.createSandbox();
+    this.sandbox.stub(IS_BROWSER, 'default').value(false);
+
+    this.deferred = new Defer();
+    this.deferredPromise = this.deferred.promise;
+
+    await render(hbs`
+      <Suspense
+        @promise={{deferredPromise}}
+        as |task|
+      >
+        {{#if task.isLoading}}
+          <div data-test-async-loading>
+            Loading...
+          </div>
+        {{else if task.isSuccess}}
+          <div data-test-async-success>
+            {{task.data.name}}
+          </div>
+        {{else if task.isError}}
+          <div data-test-async-error>
+            Error message...
+          </div>
+        {{/if}}
+      </Suspense>
+    `);
+
+    assert.dom(loadingSelector).exists('loading is rendered');
   });
 });
