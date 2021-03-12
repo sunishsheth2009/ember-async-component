@@ -55,13 +55,15 @@ export default class Suspense extends Component {
 
   get data() {
     const blockRender = this.blockRender;
+    const task = new Task();
+
     if (!IS_BROWSER && !blockRender) {
-      // we are not supposed to block rendering on the server
-      return null;
+      // we are not supposed to block rendering on the server, we would like to show loading states in SSR.
+      task.isLoading = true;
+      return task;
     }
 
     const promiseArg = this.args.promise;
-    const task = new Task();
     const promise =
       typeof promiseArg === 'function' ? promiseArg() : promiseArg;
 
