@@ -196,8 +196,7 @@ module('Integration | Component | suspense-component', function (hooks) {
     this.deferred = new Defer();
     this.deferredPromise = this.deferred.promise;
 
-    this.sandbox = sinon.createSandbox();
-    this.deferRendering = this.sandbox.stub();
+    this.deferRendering = sinon.stub();
     const fastbootStub = Service.extend({
       isFastBoot: true,
       deferRendering: this.deferRendering
@@ -250,8 +249,7 @@ module('Integration | Component | suspense-component', function (hooks) {
   test('Component renders the loading state on the server correctly', async function (assert) {
     const loadingSelector = '[data-test-async-loading]';
 
-    this.sandbox = sinon.createSandbox();
-    this.sandbox.stub(IS_BROWSER, 'default').value(false);
+    sinon.stub(IS_BROWSER, 'default').value(false);
 
     this.deferred = new Defer();
     this.deferredPromise = this.deferred.promise;
