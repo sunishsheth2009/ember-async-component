@@ -1,6 +1,6 @@
 {
   "name": "ember-async-component",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Ember.js addon for building promise aware container components",
   "keywords": [
     "ember-addon"
