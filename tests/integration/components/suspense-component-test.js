@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, waitUntil } from '@ember/test-helpers';
+import { find, render, waitUntil } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { defer as Defer } from 'rsvp';
 import Service from '@ember/service';
@@ -196,13 +196,14 @@ module('Integration | Component | suspense-component', function (hooks) {
     this.deferred = new Defer();
     this.deferredPromise = this.deferred.promise;
 
-    this.deferRendering = sinon.stub();
-    const fastbootStub = Service.extend({
-      isFastBoot: true,
-      deferRendering: this.deferRendering
-    });
+    const deferRendering = sinon.stub();
+    this.deferRendering = deferRendering;
+    class FastbootStub extends Service {
+      isFastBoot = true;
+      deferRendering = deferRendering;
+    }
 
-    this.owner.register('service:fastboot', fastbootStub);
+    this.owner.register('service:fastboot', FastbootStub);
 
     await render(hbs`
       <Suspense
