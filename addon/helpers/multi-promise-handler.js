@@ -29,8 +29,8 @@ import { hashSettled } from 'rsvp';
  *     {{/if}}
  *   {{/suspense-component}}
  */
-export default Helper.extend({
+export default class MultiPromiseHandler extends Helper {
   compute(args, hash) {
     return hashSettled(hash);
   }
-});
+}

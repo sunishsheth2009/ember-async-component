@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, waitUntil } from '@ember/test-helpers';
+import { find, render, waitUntil } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { defer as Defer } from 'rsvp';
 module('Integration | Helper | multi-promise-handler', function (hooks) {

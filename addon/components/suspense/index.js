@@ -78,7 +78,10 @@ export default class Suspense extends Component {
       return task;
     }
 
+    // TODO: Fix these linting errors, getters shouldn't have side effects
+    // eslint-disable-next-line ember/no-side-effects
     this.task = task;
+    // eslint-disable-next-line ember/no-side-effects
     this.promise = promise;
 
     task.isLoading = true;
