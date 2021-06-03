@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 /**
  * Once a deprecation is addressed, configure its handler to `throw`.
  * Please do not remove an entry until the upgrade effort is stable.
