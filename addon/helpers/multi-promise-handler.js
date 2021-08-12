@@ -31,6 +31,6 @@ import { hashSettled } from 'rsvp';
  */
 export default class MultiPromiseHandler extends Helper {
   compute(args, hash) {
-    return hashSettled(hash);
+    return hashSettled({ ...hash });
   }
 }
