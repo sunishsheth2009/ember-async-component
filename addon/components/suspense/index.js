@@ -101,7 +101,9 @@ export default class Suspense extends Component {
         task.errorReason = e;
         task.isLoading = false;
         // https://github.com/emberjs/ember.js/issues/15569
-        if (!Ember.testing) {
+        if (Ember.testing) {
+          console.error(e);
+        } else {
           throw e;
         }
       }
